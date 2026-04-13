@@ -49,6 +49,74 @@ dang_chay = False
 yeu_cau_dung = False
 
 
+def lay_danh_sach_model_ollama():
+    """Lấy danh sách model hiện có từ Ollama."""
+    try:
+        phan_hoi = ollama.list()
+        ds_model = []
+
+        for model in getattr(phan_hoi, "models", []):
+            ten_model = getattr(model, "model", None) or getattr(model, "name", None)
+            if ten_model:
+                ds_model.append(ten_model)
+
+        # Giữ thứ tự Ollama trả về nhưng loại bỏ trùng lặp.
+        return list(dict.fromkeys(ds_model))
+    except Exception:
+        return []
+
+
+def cap_nhat_danh_sach_model(model_hien_tai=""):
+    """
+    Làm mới dropdown model Ollama.
+    Giữ lại model hiện tại nếu nó vẫn tồn tại, hoặc cho phép nhập tay nếu chưa phát hiện được.
+    """
+    ds_model = lay_danh_sach_model_ollama()
+
+    if ds_model:
+        gia_tri = model_hien_tai if model_hien_tai in ds_model else None
+        if not gia_tri:
+            gia_tri = MODEL_MAC_DINH if MODEL_MAC_DINH in ds_model else ds_model[0]
+
+        thong_bao = f"✅ Đã nhận diện {len(ds_model)} model Ollama."
+        return gr.update(choices=ds_model, value=gia_tri), thong_bao
+
+    gia_tri = model_hien_tai or MODEL_MAC_DINH
+    thong_bao = "⚠️ Không lấy được danh sách model từ Ollama. Bạn vẫn có thể nhập tay."
+    return gr.update(choices=[], value=gia_tri), thong_bao
+
+
+def doc_model_api_mac_dinh():
+    """Đọc model mặc định từ api.txt để điền sẵn lên giao diện."""
+    api_path = os.path.join(THU_MUC_GOC, "api.txt")
+    model_mac_dinh = "gpt-3.5-turbo"
+
+    if not os.path.isfile(api_path):
+        return model_mac_dinh
+
+    try:
+        with open(api_path, "r", encoding="utf-8") as f:
+            for dong in f:
+                dong = dong.strip()
+                if dong.startswith("LLM_MODEL_NAME="):
+                    model = dong.split("=", 1)[1].strip()
+                    return model or model_mac_dinh
+    except Exception:
+        pass
+
+    return model_mac_dinh
+
+
+def cap_nhat_che_do_model(su_dung_api, model_api_hien_tai=""):
+    """Ẩn/hiện phần model theo chế độ Local Ollama hay Online API."""
+    model_api = (model_api_hien_tai or "").strip() or doc_model_api_mac_dinh()
+
+    return (
+        gr.update(visible=not su_dung_api),
+        gr.update(visible=su_dung_api, value=model_api),
+    )
+
+
 def lay_danh_sach_file_input():
     """Lấy danh sách file .md trong thư mục input."""
     thu_muc = os.path.join(THU_MUC_GOC, THU_MUC_DAU_VAO)
@@ -71,7 +139,7 @@ def lay_danh_sach_file_output():
     ])
 
 
-def xu_ly_web(ten_file, model, chunk_size, workers, su_dung_tu_dien, su_dung_api, progress=gr.Progress()):
+def xu_ly_web(ten_file, model_ollama, model_api, chunk_size, workers, su_dung_tu_dien, su_dung_api, progress=gr.Progress()):
     """
     Hàm xử lý chính cho Web UI.
     Trả về log text từng bước.
@@ -115,12 +183,16 @@ def xu_ly_web(ten_file, model, chunk_size, workers, su_dung_tu_dien, su_dung_api
 
         # --- Cấu hình AI ---
         api_config = None
+        model = (model_ollama or "").strip() or MODEL_MAC_DINH
         if su_dung_api:
             duong_dan_api = os.path.join(THU_MUC_GOC, "api.txt")
             api_config = doc_api_config(duong_dan_api)
             if not api_config:
                 yield "❌ Lỗi: Không thể dùng Online API. Hãy kiểm tra `api.txt` hoặc thiết lập trong tab Cấu Hình API."
                 return
+            model_api = (model_api or "").strip()
+            if model_api:
+                api_config["model_name"] = model_api
             log.append(f"🌐 Chế độ: Online API ({api_config['model_name']})")
         else:
             log.append(f"🔌 Chế độ: Local Ollama ({model})")
@@ -347,12 +419,31 @@ def tao_giao_dien():
                         label="📂 Chọn file từ input_md/",
                         interactive=True,
                     )
-                    with gr.Row():
-                        txt_model = gr.Textbox(
-                            value=MODEL_MAC_DINH,
-                            label="🤖 Model",
-                            scale=2,
+                    with gr.Group(visible=True) as nhom_model_ollama:
+                        with gr.Row():
+                            dd_model = gr.Dropdown(
+                                value=MODEL_MAC_DINH,
+                                choices=[],
+                                label="🤖 Model Ollama",
+                                info="App sẽ tự nhận diện model local đang có sẵn. Bạn vẫn có thể nhập tay nếu cần.",
+                                allow_custom_value=True,
+                                scale=2,
+                            )
+                            btn_lam_moi_model = gr.Button("🔄 Quét model", scale=1)
+                        txt_trang_thai_model = gr.Textbox(
+                            value="Đang chờ quét model Ollama...",
+                            label="Trạng thái model",
+                            interactive=False,
                         )
+                    with gr.Group(visible=False) as nhom_model_api:
+                        txt_model_api = gr.Textbox(
+                            value=doc_model_api_mac_dinh(),
+                            label="🤖 Model API",
+                            info="Mặc định lấy từ api.txt. Bạn có thể đổi riêng cho lần chạy này.",
+                            interactive=True,
+                        )
+                        gr.Markdown("Khi bật chế độ Online API, app sẽ dùng model này thay cho model local Ollama.")
+                    with gr.Row():
                         num_chunk = gr.Number(
                             value=KICH_THUOC_DOAN,
                             label="✂️ Chunk size",
@@ -389,13 +480,23 @@ def tao_giao_dien():
             # Sự kiện
             btn_chay.click(
                 fn=xu_ly_web,
-                inputs=[dd_file, txt_model, num_chunk, num_workers, chk_dict, chk_api],
+                inputs=[dd_file, dd_model, txt_model_api, num_chunk, num_workers, chk_dict, chk_api],
                 outputs=txt_log,
             )
             btn_dung.click(fn=dung_xu_ly, outputs=txt_log)
             btn_lam_moi.click(
                 fn=lambda: gr.update(choices=lay_danh_sach_file_input()),
                 outputs=dd_file,
+            )
+            btn_lam_moi_model.click(
+                fn=cap_nhat_danh_sach_model,
+                inputs=dd_model,
+                outputs=[dd_model, txt_trang_thai_model],
+            )
+            chk_api.change(
+                fn=cap_nhat_che_do_model,
+                inputs=[chk_api, txt_model_api],
+                outputs=[nhom_model_ollama, nhom_model_api],
             )
 
         # ===== TAB 2: SO SÁNH =====
@@ -458,6 +559,17 @@ def tao_giao_dien():
                 inputs=txt_api,
                 outputs=txt_trang_thai_api,
             )
+
+        app.load(
+            fn=cap_nhat_danh_sach_model,
+            inputs=dd_model,
+            outputs=[dd_model, txt_trang_thai_model],
+        )
+        app.load(
+            fn=cap_nhat_che_do_model,
+            inputs=[chk_api, txt_model_api],
+            outputs=[nhom_model_ollama, nhom_model_api],
+        )
 
     return app
 
