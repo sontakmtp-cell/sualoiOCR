@@ -1,0 +1,113 @@
+# ==============================================================================
+# TỪ ĐIỂN THUẬT NGỮ CHUYÊN NGÀNH - TỬ VI / PHONG THỦY / KINH DỊCH
+# ==============================================================================
+# Mỗi dòng chứa một hoặc nhiều thuật ngữ ĐÚNG (phân cách bằng dấu phẩy).
+# Dòng bắt đầu bằng # là ghi chú, sẽ được bỏ qua.
+# Script sẽ gửi danh sách này kèm prompt để AI biết từ nào là đúng.
+# ==============================================================================
+
+# === LỖI OCR PHỔ BIẾN (SAI → ĐÚNG) ===
+# Dòng bắt đầu bằng >> là quy tắc sửa lỗi: từ_sai → từ_đúng
+>> DƯỚNG → DƯƠNG
+>> TỪ-VI → TỬ-VI
+>> THỂY → THỦY
+>> HỒA → HỎA
+>> THỒ → THỔ
+>> ĐƯỚNG → DƯƠNG
+>> THÙY → THỦY
+>> KHỒN → KHÔN
+>> KIỂN → CÀN
+>> DÍCH → DỊCH
+>> ĐOÁN → ĐOÀI
+>> KHỐNG-TỪ → KHỔNG-TỬ
+>> BÁT-TỪ → BÁT-TỰ
+>> TRẦN-ĐOẠN → TRẦN-ĐOÀN
+>> TỪ-BÌNH → TỬ-BÌNH
+>> BÍNH-DƯỚNG → BÍNH-DƯƠNG
+>> BÁT-TỬ → BÁT-TỰ
+>> HÀ-LỢC → HÀ-LẠC
+>> TỪ-VI → TỬ-VI
+>> KINH-DÍCH → KINH-DỊCH
+>> DÍCH-LÝ → DỊCH-LÝ
+>> LÝ-SÔ → LÝ-SỐ
+>> CỘ-SỐ → CƠ-SỞ
+>> LÝ-HOC → LÝ-HỌC
+>> HÀ-ĐỖ → HÀ-ĐỒ
+>> LẠC-THỰ → LẠC-THƯ
+>> BÁCH-NIỆN-LỊCH → BÁCH-NIÊN-LỊCH
+>> NGUYỄN-KHÍ → NGUYÊN-KHÍ
+>> CỘ-SỐ → CƠ-SỞ 
+>> ĐAỠ-LÝ → ĐẠO-LÝ
+>> QUÁI-DANH-HUNG → QUÁI-DANH-HƯNG (tên quẻ xấu)
+>> LỤC-THÁP → LỤC-THẬP
+>> NGỮ-DẦN → NGŨ-DẦN
+>> NGỮ-TÍ → NGŨ-TÍ
+>> ÀM → ÂM
+>> DƯỚNG → DƯƠNG
+>> TRỐI → TRỜI
+>> ĐẠT → ĐẤT
+>> NHÀN → NHÂN
+>> NHẬN → NHÂN
+>> VỮ-TRỤ → VŨ-TRỤ
+>> TRUNG-ƯỚNG → TRUNG-ƯƠNG
+>> QUỐ → QUẺ
+>> QUẾ → QUẺ
+>> HẢO → HÀO
+>> HẢO-TỪ → HÀO-TỪ
+>> KIỂN → CÀN
+>> KHỒN → KHÔN
+>> HỒA → HỎA
+>> THỒ → THỔ
+>> THỨY → THỦY
+>> THỸ → THỔ
+>> TRỨNG → TRÙNG
+>> THIỆN-TRÁCH-LÝ → THIÊN-TRẠCH-LÝ
+>> THIỆN-PHONG → THIÊN-PHONG
+>> ĐOÁN → ĐOÀI
+>> GIẢP → GIÁP
+>> TÀN → TÂN
+>> NHẨM → NHÂM
+>> NHẬM → NHÂM
+>> QUY → QUÝ
+>> QUY-SỬU → QUÝ-SỬU
+>> QUỐ-SỬU → QUÝ-SỬU
+>> TỪ → TỊ
+>> TY → TỊ
+>> MỤI → MÙI
+>> THÁN → THÂN
+>> HỘI → HỢI
+>> THÍN → THÌN
+>> MẢO → MÃO
+>> DẦU → DẬU
+>> NGUYỄN-ĐƯỜNG → NGUYÊN-ĐƯỜNG
+>> TIÊN-THIỆN → TIÊN-THIÊN
+>> HẬU-THIỂN → HẬU-THIÊN
+>> ĐẠI-VẬN → ĐẠI-VẬN
+>> LUU-NIÊN → LƯU-NIÊN
+>> VÀN → VẬN
+>> MÊNH → MỆNH
+>> MỤNH → MỆNH
+>> GIÓ → GIỜ
+>> LẬP-XUẠN → LẬP-XUÂN
+>> LẬP-XUẬN → LẬP-XUÂN
+>> ĐÔNG-CHÍ → ĐÔNG-CHÍ
+>> HÀ-CHÍ → HẠ-CHÍ
+>> TRĂN-ĐOÀN → TRẦN-ĐOÀN
+>> TRẦN-ĐOẠN → TRẦN-ĐOÀN
+>> KHÔNG-TỪ → KHỔNG-TỬ
+>> KHỐNG-TỪ → KHỔNG-TỬ
+>> THIỆU-KHANG-TIẾT → THIỆU-KHANG-TIẾT
+>> TRANG-TRÌNH → TRẠNG-TRÌNH
+>> PHAN-SÁO-NAM → PHAN-SÀO-NAM
+>> TRẦN-HY-DI → TRẦN-HI-DI
+>> BÍNH-DƯỚNG → BÍNH-DƯƠNG
+>> GIẢP → GIÁP 
+>> NHẬM → NHÂM 
+>> QUY → QUÝ 
+>> TÁN → TÂN 
+>> MẢO → MÃO
+>> THÍN → THÌN 
+>> MỪI / MỤI → MÙI 
+>> NGO → NGỌ
+>> HỘI → HỢI 
+>> TỶ → TỊ

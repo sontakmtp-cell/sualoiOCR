@@ -1,0 +1,29 @@
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Archives
+*.rar
+*.zip
+
+# App directories
+progress/*
+!progress/.gitkeep
+
+output_md/*
+!output_md/.gitkeep
+
+reports/*
+!reports/.gitkeep
+
+input_md/*
+!input_md/.gitkeep
+
+# Secrets
+*.env
+api.txt
